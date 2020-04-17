@@ -1,0 +1,23 @@
+
+while getopts i:s: option
+do
+case "${option}"
+in
+i) IMAGE=${OPTARG};;
+s) TARGETSIZE=${OPTARG};;
+esac
+done
+
+
+lsblk | grep "$TARGETSIZE" | cut -d" " -f1 | while read line
+do
+title="Running FWFlash on $line with $IMAGE on a $TARGETSIZE USB Drive"
+command="pv -tpreb $IMAGE | dd of=/dev/$line bs=4096 conv=notrunc,noerror; exit"
+echo $title
+
+#comment out if running on headless workstations or via remote SSH sessions (install xterm and pv from your repos)
+sudo xterm -xrm 'XTerm.vt100.allowTitleOps: false' -T "$title" -e bash -c "$command" &
+
+#uncomment if running on headless workstations or via remote SSH sessions
+#sudo dd if=$IMAGE of=/dev/$line status=progress &
+done
