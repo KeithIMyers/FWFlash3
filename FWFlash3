@@ -8,6 +8,7 @@ s) TARGETSIZE=${OPTARG};;
 esac
 done
 
+TARGETSIZE=" $TARGETSIZE"
 
 lsblk | grep "$TARGETSIZE" | cut -d" " -f1 | while read line
 do
